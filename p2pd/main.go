@@ -299,9 +299,13 @@ func main() {
 	}
 
 	if c.ConnectionManager.Enabled {
-		cm := connmgr.NewConnManager(c.ConnectionManager.LowWaterMark,
+		cm, err := connmgr.NewConnManager(c.ConnectionManager.LowWaterMark,
 			c.ConnectionManager.HighWaterMark,
-			c.ConnectionManager.GracePeriod)
+			connmgr.WithGracePeriod(c.ConnectionManager.GracePeriod))
+		if err != nil {
+			log.Fatal(err)
+		}
+
 		opts = append(opts, libp2p.ConnectionManager(cm))
 	}
 
@@ -324,17 +328,7 @@ func main() {
 	}
 
 	if c.Relay.Enabled {
-		var relayOpts []relay.RelayOpt
-		if c.Relay.Active {
-			relayOpts = append(relayOpts, relay.OptActive)
-		}
-		if c.Relay.Hop {
-			relayOpts = append(relayOpts, relay.OptHop)
-		}
-		if c.Relay.Discovery {
-			relayOpts = append(relayOpts, relay.OptDiscovery)
-		}
-		opts = append(opts, libp2p.EnableRelay(relayOpts...))
+		opts = append(opts, libp2p.EnableRelay())
 
 		if c.Relay.Auto {
 			opts = append(opts, libp2p.EnableAutoRelay())

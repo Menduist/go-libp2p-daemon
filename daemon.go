@@ -58,7 +58,7 @@ func NewDaemon(ctx context.Context, maddr ma.Multiaddr, dhtMode string, opts ...
 		opts = append(opts, libp2p.Routing(d.DHTRoutingFactory(dhtOpts)))
 	}
 
-	h, err := libp2p.New(ctx, opts...)
+	h, err := libp2p.New(opts...)
 	if err != nil {
 		return nil, err
 	}
